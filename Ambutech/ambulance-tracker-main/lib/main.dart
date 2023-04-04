@@ -1,13 +1,15 @@
 // @dart=2.9
-import 'package:ambulance_tracker/Animation/fadeAnimation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/Welcome/welcome_screen.dart';
 
-void main() => runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
-    )
-);
+Future main()async {
+     WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: WelcomeScreen(),
+  ));
+}
 

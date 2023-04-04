@@ -1,7 +1,6 @@
 import 'package:ambulance_tracker/services/current_location.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_switch/sliding_switch.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 
 
 class DriverPage extends StatefulWidget {
@@ -30,8 +29,8 @@ class _DriverPageState extends State<DriverPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text("Driver page"),
-          backgroundColor: Color.fromRGBO(143, 148, 251, 1),
+          title: const Text("Driver page"),
+          backgroundColor: const Color.fromRGBO(143, 148, 251, 1),
 
       ),
       body: Padding(
@@ -40,7 +39,7 @@ class _DriverPageState extends State<DriverPage> {
           children: [
             Row(
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery
                       .of(context)
                       .size
@@ -58,8 +57,8 @@ class _DriverPageState extends State<DriverPage> {
                             child: Image.network(
                                 "https://static.wikia.nocookie.net/pokemon/images/8/88/Char-Eevee.png/revision/latest?cb=20190625223735"),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
                             child: Text("Name: Chakit Dalmia"),
                           ),
                         ],
@@ -85,15 +84,15 @@ class _DriverPageState extends State<DriverPage> {
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
+              children: const [
+              Text(
                   "Working: ",
                   style: TextStyle(fontSize: 28),
                 ),
 
               ],
             ),
-            Container(
+            SizedBox(
               width: MediaQuery
                   .of(context)
                   .size

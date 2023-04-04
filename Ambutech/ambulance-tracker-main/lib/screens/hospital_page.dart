@@ -1,8 +1,13 @@
-import 'package:ambulance_tracker/screens/new_driver_page.dart';
+import 'package:ambulance_tracker/screens/patient_page.dart';
+import 'package:ambulance_tracker/services/notifications.dart';
+import 'package:ambulance_tracker/services/users.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../services/drivers.dart';
 import 'all_drivers.dart';
 
 class HospitalPage extends StatefulWidget {
@@ -13,11 +18,26 @@ class HospitalPage extends StatefulWidget {
 }
 
 class _HospitalPageState extends State<HospitalPage> {
+  String number = '';
+  int count = 0;
+  List id = [];
+  NotificationsServices notificationsServices = NotificationsServices();
+
+  @override
+  void initState() {
+    number = bookedUsers.length.toString();
+    notificationsServices.InitializeSettings();
+    super.initState();
+  }
+
+  final fireStore =
+      FirebaseFirestore.instance.collection('Bookings').snapshots();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Material(
-        color: Color.fromRGBO(143, 148, 251, 0.75),
+        color: const Color.fromRGBO(143, 148, 251, 0.75),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -36,7 +56,7 @@ class _HospitalPageState extends State<HospitalPage> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: RichText(
-                              text: TextSpan(
+                              text: const TextSpan(
                                   text:
                                       "Hospital Dashboard         ", //let the spaces be for alignment
                                   style: TextStyle(
@@ -50,66 +70,65 @@ class _HospitalPageState extends State<HospitalPage> {
                       ),
                       Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Align(
                             alignment: Alignment.topLeft,
-                            child: RichText(
-                              text: TextSpan(
-                                  text: "You have got 3 requests\ncurrently!",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                            child: Text(
+                              'you have got ' +
+                                  number +
+                                  ' requests\ncurrently!',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                         ],
                       ),
-                      Container(
+                      SizedBox(
                         height: 250,
-                        child: PageView(
-                          controller: PageController(viewportFraction: 0.9),
-                          scrollDirection: Axis.horizontal,
-                          pageSnapping: true,
-                          children: <Widget>[
-                            _buildRequestsCard(
-                              title: "Name: Rahul",
-                              subject: "Location",
-                              text:
-                                  "B-806, Amberley Silver Skyline, Manish Nagar, Andheri West, Mumbai, India",
-                              image: Image.asset('images/background.png'),
-                            ),
-                            _buildRequestsCard(
-                              title: "Name: Dinesh",
-                              subject: "Location",
-                              text:
-                                  "406, Sai Jyote, Vile Parle West, Andheri, Mumbai, India",
-                              image: Image.network(
-                                'https://i0.wp.com/cssscript.com/wp-content/uploads/2018/03/Simple-Location-Picker.png?fit=561%2C421&ssl=1',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            _buildRequestsCard(
-                              title: "Name: Salman",
-                              subject: "Location",
-                              text:
-                                  "2A, Rosewood Chambers, Tulsiwadi, Tardeo, Mumbai, India ",
-                              image: Image.network(
-                                  'https://i0.wp.com/cssscript.com/wp-content/uploads/2018/03/Simple-Location-Picker.png?fit=561%2C421&ssl=1'),
-                            )
-                          ],
-                        ),
+                        child: StreamBuilder<QuerySnapshot>(
+                            stream: fireStore,
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              if (snapshot.hasError) {
+                                return const Center(child: Text('Some error'));
+                              }
+                             
+                               return ListView.builder(
+                                itemCount: snapshot.data!.docs.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                   return _buildRequestsCard(
+                                    
+                                    index: index,
+                                    title: "Name: " +
+                                        snapshot.data!.docs[index]['user'],
+                                    subject: "Location",
+                                    text: snapshot.data!.docs[index]['loc'],
+                                    id: snapshot.data!.docs[index].id,
+                                  );
+                                },
+                              
+                              );
+                            }),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               ConstrainedBox(
                 constraints: const BoxConstraints(
                   minWidth: double.infinity,
@@ -120,7 +139,7 @@ class _HospitalPageState extends State<HospitalPage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
                     color: Colors.white,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 1,
@@ -131,13 +150,13 @@ class _HospitalPageState extends State<HospitalPage> {
                     ],
                   ),
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-                  child: new SingleChildScrollView(
-                    child: new Column(
+                  child: SingleChildScrollView(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 25),
-                        Container(
+                        const SizedBox(height: 25),
+                        SizedBox(
                           height: 250,
                           child: PageView(
                             controller: PageController(
@@ -155,7 +174,7 @@ class _HospitalPageState extends State<HospitalPage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ShowDrivers()),
+                                                const ShowDrivers()),
                                       )),
                             ],
                           ),
@@ -185,7 +204,7 @@ class _HospitalPageState extends State<HospitalPage> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: InkWell(
           onTap: onTap,
           child: Column(
@@ -203,26 +222,26 @@ class _HospitalPageState extends State<HospitalPage> {
                   )),
                 ],
               )),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               RichText(
                   text: TextSpan(
                       text: title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 19,
                       ))),
-              SizedBox(height: 20),
-              Divider(
+              const SizedBox(height: 20),
+              const Divider(
                 thickness: 1,
               ),
               RichText(
                   text: TextSpan(
                       text: total,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                       ))),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -233,16 +252,18 @@ class _HospitalPageState extends State<HospitalPage> {
   Widget _buildRequestsCard({
     required String title,
     String? subject,
+    required var id,
+    required int index,
     required String text,
-    required Image image,
   }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return Container(
+      height: 120,
+      width: 270,
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40), color: Colors.white),
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,40 +271,126 @@ class _HospitalPageState extends State<HospitalPage> {
             RichText(
               text: TextSpan(
                   text: title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                   )),
             ),
-            SizedBox(
-              height: 20,
+            const SizedBox(
+              height: 10,
             ),
             RichText(
               text: TextSpan(
                   text: subject,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   )),
             ),
-            SizedBox(
-              height: 20,
+            const SizedBox(
+              height: 10,
             ),
             RichText(
               text: TextSpan(
                   text: text,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,
                   )),
             ),
-            SizedBox(
-              height: 20,
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      checkAvailability(index, id);
+                    },
+                    child: const Text('Confirm')),
+                const SizedBox(
+                  width: 50,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      cancelBooking(index, id);
+                    },
+                    child: const Text('cancel')),
+              ],
             )
           ],
         ),
       ),
     );
+  }
+
+  void checkAvailability(int index, var fid) async {
+    for (var e in drivers) {
+      if (e['isFree'] && e['isAvailable']) {
+        id.add(e['id']);
+      } else {
+        print('not available');
+      }
+    }
+    print(id);
+    if (id.isEmpty) {
+        notificationsServices.sendNotification(
+        'AmbuTech',
+        'Sorry Ambulance is unavailable at the moment please try another hospital ',
+      );
+      await FirebaseFirestore.instance
+          .collection('Bookings')
+          .doc(fid)
+          .update({"Booked": false});
+      Fluttertoast.showToast(
+          msg: "Ambulance not available",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      notificationsServices.sendNotification(
+        'AmbuTech',
+        'Booking Confirmed! Ambulance will arrive shortly ',
+      );
+      await FirebaseFirestore.instance
+          .collection('Bookings')
+          .doc(fid)
+          .update({"Booked": true});
+
+      Fluttertoast.showToast(
+          msg: "Booking confirmed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    drivers[id[0] - 1]['isAvailable'] = false;
+    drivers[id[0] - 1]['isFree'] = false;
+    id.clear();
+
+    setState(() {
+      number = bookedUsers.length.toString();
+      bookedUsers.removeAt(index);
+    });
+  }
+
+  void cancelBooking(int index, var id) async {
+    notificationsServices.sendNotification(
+        'AmbuTech',
+        'Sorry Ambulance is unavailable at the moment please try another hospital ',
+      );
+    await FirebaseFirestore.instance.collection('Bookings').doc(id).delete();
+    setState(() {
+      number = bookedUsers.length.toString();
+      bookedUsers.removeAt(index);
+    });
+    Fluttertoast.showToast(
+        msg: "Booking canceled",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 }

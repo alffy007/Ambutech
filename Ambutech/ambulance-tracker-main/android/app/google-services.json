@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "384191733804",
-    "project_id": "ambulance-tracker-a40ed",
-    "storage_bucket": "ambulance-tracker-a40ed.appspot.com"
+    "project_number": "987907083936",
+    "project_id": "ambutech-ef444",
+    "storage_bucket": "ambutech-ef444.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:384191733804:android:2994f263ee075f54f4f189",
+        "mobilesdk_app_id": "1:987907083936:android:274db77b3b0e3ec06683c5",
         "android_client_info": {
           "package_name": "com.example.ambulance_tracker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "384191733804-dfoqr62i4gtaohs5lk97jrps3chf98e0.apps.googleusercontent.com",
+          "client_id": "987907083936-m16l5kma71vlt0k68h8slrih72s0bedu.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCLPzVUYpJHdhg9072LUO5qFrijGgAPkrU"
+          "current_key": "AIzaSyCcMHllP7Q2T3DDcBcUtEsW592Yp24Ng7c"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "384191733804-dfoqr62i4gtaohs5lk97jrps3chf98e0.apps.googleusercontent.com",
+              "client_id": "987907083936-m16l5kma71vlt0k68h8slrih72s0bedu.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

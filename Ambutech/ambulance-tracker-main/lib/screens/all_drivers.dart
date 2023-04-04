@@ -1,3 +1,4 @@
+import 'package:ambulance_tracker/screens/driver_page.dart';
 import 'package:flutter/material.dart';
 
 import 'new_driver_page.dart';
@@ -13,14 +14,14 @@ class ShowDrivers extends StatefulWidget {
 class _ShowDriversState extends State<ShowDrivers> {
   @override
   Widget build(BuildContext context) {
-    List<List<Widget>> tab_cats = sortDrivers();
+    List<List<Widget>> tabCats = sortDrivers();
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("All drivers"),
-          backgroundColor: Color.fromRGBO(143, 148, 251, 1),
-          bottom: TabBar(tabs: [
+          title: const Text("All drivers"),
+          backgroundColor: const Color.fromRGBO(143, 148, 251, 1),
+          bottom: const TabBar(tabs: [
             Tab(
               icon: Icon(Icons.location_on),
             ),
@@ -32,7 +33,7 @@ class _ShowDriversState extends State<ShowDrivers> {
           ]),
           actions: <Widget>[
             IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.person_add_alt_1,
                   color: Colors.white,
                 ),
@@ -46,17 +47,17 @@ class _ShowDriversState extends State<ShowDrivers> {
           Column(),
           SingleChildScrollView(
             child: Column(
-              children: tab_cats[0],
+              children: tabCats[0],
             ),
           ),
           SingleChildScrollView(
             child: Column(
-              children: tab_cats[2],
+              children: tabCats[2],
             ),
           ),
           SingleChildScrollView(
             child: Column(
-              children: tab_cats[1],
+              children: tabCats[1],
             ),
           ),
         ]),
@@ -67,21 +68,27 @@ class _ShowDriversState extends State<ShowDrivers> {
   Widget driverCard(String name, Color col, String status, String regId) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
+      child: SizedBox(
           width: MediaQuery.of(context).size.width - 50,
           height: MediaQuery.of(context).size.height / 6,
           child: Card(
-            child: Column(children: [
-              Row(
-                children: [
-                  // Image.network(
-                  //  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1024px-User-avatar.svg.png")
-                ],
-              ),
-              Text(name),
-              Text(regId),
-              Text(status)
-            ]),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 26),
+              child: Column(children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  regId,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  status,
+                  style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: status == 'Available' ? Colors.green : Colors.red ),
+                ),
+              ]),
+            ),
             color: col,
           )),
     );
@@ -98,7 +105,7 @@ class _ShowDriversState extends State<ShowDrivers> {
       if (e['isFree'] && !e['isAvailable']) {
         offline.add(driverCard(e['name'], Color.fromRGBO(235, 233, 228, 1),
             "Offline", e["reg_id"]));
-      } else if (e['isFree']) {
+      } else if (e['isFree'] && e['isAvailable']) {
         available.add(driverCard(e['name'], Color.fromRGBO(217, 250, 195, 1),
             "Available", e["reg_id"]));
       } else if (!e['isFree'] || !e['isAvailable']) {
